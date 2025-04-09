@@ -1,6 +1,6 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
-    import {points} from "./track.svelte";
+    import {points, removeTempElements, segments} from "./track.svelte";
     import type {SvgLocation} from "./datatypes";
     import {activeTool} from "./lib/tools/toolState.svelte";
 
@@ -19,7 +19,6 @@
     let viewport: Viewport = $state({offsetX: 0, offsetY: 0, scale: 1});
     let svgElement: SVGElement;
     let dragStart: null | SvgCoordinate = null;
-    let isDragging = false;
 
     function getSvgLocation(mouseX: number, mouseY: number): SvgLocation {
         const rect = svgElement.getBoundingClientRect();
@@ -73,6 +72,10 @@
         }
     }
 
+    function handleMouseLeave(event: MouseEvent) {
+        removeTempElements();
+    }
+
     function handleWheel(event: WheelEvent) {
         event.preventDefault();
         const delta = event.deltaY > 0 ? 0.9 : 1.1;
@@ -82,13 +85,19 @@
 </script>
 
 <main>
-    <svg role="application" aria-label="Drawing canvas"
-         on:mousemove={handleMouseMove} on:mouseenter={handleMouseMove}
-         on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} on:mouseleave={handleMouseUp}
-         on:wheel={handleWheel} bind:this={svgElement}>
+    <!-- svelte-ignore <a11y_no_noninteractive_element_interactions> -->
+    <svg role="application" bind:this={svgElement}
+         onmousemove={handleMouseMove} onmouseenter={handleMouseMove} onmouseleave={handleMouseLeave}
+         onmousedown={handleMouseDown} onmouseup={handleMouseUp} onwheel={handleWheel}>
         <g transform="translate({viewport.offsetX} {viewport.offsetY}) scale({viewport.scale})">
             {#each points as p}
                 <circle cx={p.location.x} cy={p.location.y} r="5" fill='#ff3e00'/>
+            {/each}
+            {#each segments as s}
+                {#if s.type === "straight"}
+                    <line x1={s.a.location.x} y1={s.a.location.y} x2={s.b.location.x} y2={s.b.location.y}
+                          stroke="#ff3e00" stroke-width="2"/>
+                {/if}
             {/each}
         </g>
     </svg>

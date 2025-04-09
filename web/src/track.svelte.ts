@@ -4,21 +4,32 @@ import _ from "lodash";
 export let points: Point[] = $state([]);
 export let segments: Segment[] = $state([]);
 
-export function setTempPoint(index: number, location: Location) {
+export function setTempPoint(index: number, location: Location): Point {
     const tpOpt = points.find(p => p.id === "p-tmp-" + index);
-    if (tpOpt)
+    if (tpOpt) {
         tpOpt.location = location;
-    else
-        points.push({id: "p-tmp-" + index, location: location});
+        return tpOpt;
+    } else {
+        let tp = {id: "p-tmp-" + index, location: location};
+        points.push(tp);
+        return tp;
+    }
 }
 
-export function removeTempPoints() {
+export function removeTempElements() {
     _.remove(points, p => p.id.startsWith("p-tmp-"));
+    _.remove(segments, s => s.id.startsWith("s-tmp-"));
 }
 
-export function createPoint(location: Location) {
+export function createPoint(location: Location): Point {
     const point = {id: "p-" + randomString(10), location}
     points.push(point);
+    return point;
+}
+
+export function createSegment(segment: Segment) {
+    segment.id = "s-" + randomString(10);
+    segments.push(segment);
 }
 
 

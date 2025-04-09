@@ -1,6 +1,6 @@
 <script lang="ts">
     import {activeTool, type ITool} from './toolState.svelte'
-    import {removeTempPoints} from "../../track.svelte";
+    import {removeTempElements} from "../../track.svelte";
 
     interface Props extends ITool {
         displayName: string
@@ -13,7 +13,7 @@
         if (event.button !== 0)
             return;
 
-        removeTempPoints();
+        removeTempElements();
         if (activeTool.itool === null || activeTool.itool.id !== id)
             activeTool.itool = {id, handleMove, handleClick};
         else
