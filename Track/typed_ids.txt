@@ -1,0 +1,11 @@
+p: point
+s: track segment (geometric track building block)
+t: track (multiple track segments combined)
+v: switch
+x: railway crossing, traffic intersection
+
+TODO:
+f: frame (rigid segment of rail vehicle)
+l: locomotive (1+ frames)
+g: cargo wagon (1+ frames)
+t: train
