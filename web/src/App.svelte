@@ -1,6 +1,8 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
     import {points} from "./track.svelte";
+    import type {SvgLocation} from "./datatypes";
+    import {activeTool} from "./lib/tools/toolState.svelte";
 
     interface Viewport {
         offsetX: number;
@@ -8,43 +10,82 @@
         scale: number;
     }
 
+    interface SvgCoordinate {
+        x: number;
+        y: number;
+    }
+
     let isMouseNearSidebar = $state(false);
     let viewport: Viewport = $state({offsetX: 0, offsetY: 0, scale: 1});
+    let svgElement: SVGElement;
+    let dragStart: null | SvgCoordinate = null;
     let isDragging = false;
 
-    points.push({id: "temp", location: {x: 200, y: 200}});
+    function getSvgLocation(mouseX: number, mouseY: number): SvgLocation {
+        const rect = svgElement.getBoundingClientRect();
+        let x = (mouseX - rect.left - viewport.offsetX) / viewport.scale;
+        let y = (mouseY - rect.top - viewport.offsetY) / viewport.scale;
+        return {location: {x, y}};
+    }
 
     function handleMouseMove(event: MouseEvent) {
         isMouseNearSidebar = event.clientX < window.innerWidth / 4;
 
-        if (isDragging) {
+        if (dragStart !== null) {
             viewport.offsetX += event.movementX;
             viewport.offsetY += event.movementY;
+            return;
+        }
+
+        const itool = activeTool.itool;
+        if (itool) {
+            const svgLocation = getSvgLocation(event.clientX, event.clientY);
+            itool.handleMove({svgLocation})
         }
     }
 
     function handleMouseDown(event: MouseEvent) {
         if (event.button === 0) {
-            isDragging = true;
+            dragStart = {x: event.clientX, y: event.clientY};
         }
     }
 
     function handleMouseUp(event: MouseEvent) {
-        isDragging = false;
+        const dragEnd = {x: event.clientX, y: event.clientY};
+        if (isClick(<SvgCoordinate>dragStart, dragEnd)) {
+            handleClick(event);
+        }
+        dragStart = null;
+    }
+
+    function isClick(dragStart: SvgCoordinate, dragEnd: SvgCoordinate): boolean {
+        const threshold = window.screen.width / 400;
+        let dx = Math.abs(dragEnd.x - dragStart.x);
+        let dy = Math.abs(dragEnd.y - dragStart.y);
+        return dx + dy <= threshold;
+    }
+
+    function handleClick(event: MouseEvent) {
+        const itool = activeTool.itool;
+        if (itool) {
+            const svgLocation = getSvgLocation(event.clientX, event.clientY);
+            itool.handleClick({svgLocation})
+        }
     }
 
     function handleWheel(event: WheelEvent) {
         event.preventDefault();
         const delta = event.deltaY > 0 ? 0.9 : 1.1;
         viewport.scale *= delta;
+        handleMouseMove(event)
     }
 </script>
 
 <main>
-    <svg on:mousemove={handleMouseMove} on:mouseenter={handleMouseMove}
+    <svg role="application" aria-label="Drawing canvas"
+         on:mousemove={handleMouseMove} on:mouseenter={handleMouseMove}
          on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} on:mouseleave={handleMouseUp}
-         on:wheel={handleWheel}
-         role="application" aria-label="Drawing canvas">
+         on:wheel={handleWheel} bind:this={svgElement}>
         <g transform="translate({viewport.offsetX} {viewport.offsetY}) scale({viewport.scale})">
             {#each points as p}
                 <circle cx={p.location.x} cy={p.location.y} r="5" fill='#ff3e00'/>
