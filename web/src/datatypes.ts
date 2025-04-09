@@ -24,6 +24,6 @@ export interface RadialSegment extends Segment {
     c: Point;
 }
 
-export interface SvgLocation {
+export interface SvgMouseLocation {
     location: Location;
 }

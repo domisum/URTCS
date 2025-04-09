@@ -1,7 +1,7 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
     import {points, removeTempElements, segments} from "./track.svelte";
-    import type {SvgLocation} from "./datatypes";
+    import type {SvgMouseLocation} from "./datatypes";
     import {activeTool} from "./lib/tools/toolState.svelte";
 
     interface Viewport {
@@ -20,7 +20,7 @@
     let svgElement: SVGElement;
     let dragStart: null | SvgCoordinate = null;
 
-    function getSvgLocation(mouseX: number, mouseY: number): SvgLocation {
+    function getSvgLocation(mouseX: number, mouseY: number): SvgMouseLocation {
         const rect = svgElement.getBoundingClientRect();
         let x = (mouseX - rect.left - viewport.offsetX) / viewport.scale;
         let y = (mouseY - rect.top - viewport.offsetY) / viewport.scale;
