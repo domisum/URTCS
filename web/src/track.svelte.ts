@@ -19,6 +19,18 @@ export function createSegment(segment: Segment) {
     segments.push(segment);
 }
 
+export function deleteTrackElement(id: string) {
+    const rmPoints = _.remove(points, p => p.id === id);
+    _.remove(segments, s => s.id === id || doesSegmentContainAnyPoint(s, rmPoints));
+}
+
+function doesSegmentContainAnyPoint(segment: Segment, points: Point[]): boolean {
+    for (const p of points)
+        if (segment.a.id == p.id || segment.b.id == p.id)
+            return true;
+    return false;
+}
+
 export function setTempPoint(index: number, location: Location): Point {
     const tpOpt = points.find(p => p.id === "p-tmp-" + index);
     if (tpOpt) {

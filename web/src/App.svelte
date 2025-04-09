@@ -1,7 +1,7 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
     import {points, removeTempElements, segments} from "./track.svelte";
-    import type {SvgMouseLocation} from "./datatypes";
+    import type {Point, RadialSegment, SvgMouseLocation} from "./datatypes";
     import {activeTool} from "./lib/tools/toolState.svelte";
 
     interface Viewport {
@@ -20,6 +20,11 @@
     let svgElement: SVGElement;
     let dragStart: null | SvgCoordinate = null;
 
+    const a = {id: "p-a", location: {x: 100, y: 100}} as Point;
+    const b = {id: "p-b", location: {x: 200, y: 200}} as Point;
+    points.push(a, b);
+    segments.push({id: "s-xd", type: "radial", a, b, r: 200, turnDirection: "r"} as RadialSegment)
+
     function getSvgLocation(mouseX: number, mouseY: number): SvgMouseLocation {
         const rect = svgElement.getBoundingClientRect();
         let x = (mouseX - rect.left - viewport.offsetX) / viewport.scale;
@@ -28,7 +33,7 @@
         let hoveredElements = document.elementsFromPoint(mouseX, mouseY);
         let hoveredTrackElementIds = [];
         for (let i = 0; i < hoveredElements.length; i++) {
-            if(hoveredElements[i].classList.contains("trackElement"))
+            if (hoveredElements[i].classList.contains("trackElement"))
                 hoveredTrackElementIds.push(hoveredElements[i].id);
         }
 
@@ -76,7 +81,7 @@
         const itool = activeTool.itool;
         if (itool) {
             const svgLocation = getSvgLocation(event.clientX, event.clientY);
-            itool.handleClick({svgMouseLocation: svgLocation})
+            itool.handleClick({svgMouseLocation: svgLocation});
         }
     }
 
@@ -88,7 +93,13 @@
         event.preventDefault();
         const delta = event.deltaY > 0 ? 0.9 : 1.1;
         viewport.scale *= delta;
-        handleMouseMove(event)
+        handleMouseMove(event);
+    }
+
+    function generateRadialSegmentSvgPath(s: any): string {
+        const rs = <RadialSegment>s;
+        const sweepFlag = rs.turnDirection === "r" ? "1" : "0";
+        return `M ${rs.a.location.x} ${rs.a.location.y} A ${(rs.r)} ${(rs.r)} 0 0 ${sweepFlag} ${rs.b.location.x} ${rs.b.location.y}`;
     }
 </script>
 
@@ -102,6 +113,8 @@
                 {#if s.type === "straight"}
                     <line id={s.id} class="trackElement"
                           x1={s.a.location.x} y1={s.a.location.y} x2={s.b.location.x} y2={s.b.location.y}/>
+                {:else if s.type === "radial"}
+                    <path id={s.id} class="trackElement" d={generateRadialSegmentSvgPath(s)}/>
                 {/if}
             {/each}
             {#each points as p}
@@ -160,6 +173,17 @@
     }
 
     svg line:hover {
+        stroke: #ff3e00;
+        stroke-width: 3px;
+    }
+
+    svg path {
+        stroke: #ccc;
+        stroke-width: 2px;
+        fill: none;
+    }
+
+    svg path:hover {
         stroke: #ff3e00;
         stroke-width: 3px;
     }

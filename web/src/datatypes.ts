@@ -21,7 +21,8 @@ export interface StraightSegment extends Segment {
 
 export interface RadialSegment extends Segment {
     type: "radial";
-    c: Point;
+    r: number;
+    turnDirection: "r" | "l";
 }
 
 export interface SvgMouseLocation {
