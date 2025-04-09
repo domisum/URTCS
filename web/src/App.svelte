@@ -24,7 +24,15 @@
         const rect = svgElement.getBoundingClientRect();
         let x = (mouseX - rect.left - viewport.offsetX) / viewport.scale;
         let y = (mouseY - rect.top - viewport.offsetY) / viewport.scale;
-        return {location: {x, y}};
+
+        let hoveredElements = document.elementsFromPoint(mouseX, mouseY);
+        let hoveredTrackElementIds = [];
+        for (let i = 0; i < hoveredElements.length; i++) {
+            if(hoveredElements[i].classList.contains("trackElement"))
+                hoveredTrackElementIds.push(hoveredElements[i].id);
+        }
+
+        return {location: {x, y}, hoveredTrackElementIds};
     }
 
     function handleMouseMove(event: MouseEvent) {
@@ -39,7 +47,7 @@
         const itool = activeTool.itool;
         if (itool) {
             const svgLocation = getSvgLocation(event.clientX, event.clientY);
-            itool.handleMove({svgLocation})
+            itool.handleMove({svgMouseLocation: svgLocation})
         }
     }
 
@@ -68,7 +76,7 @@
         const itool = activeTool.itool;
         if (itool) {
             const svgLocation = getSvgLocation(event.clientX, event.clientY);
-            itool.handleClick({svgLocation})
+            itool.handleClick({svgMouseLocation: svgLocation})
         }
     }
 
@@ -90,14 +98,14 @@
          onmousemove={handleMouseMove} onmouseenter={handleMouseMove} onmouseleave={handleMouseLeave}
          onmousedown={handleMouseDown} onmouseup={handleMouseUp} onwheel={handleWheel}>
         <g transform="translate({viewport.offsetX} {viewport.offsetY}) scale({viewport.scale})">
-            {#each points as p}
-                <circle cx={p.location.x} cy={p.location.y} r="5" fill='#ff3e00'/>
-            {/each}
             {#each segments as s}
                 {#if s.type === "straight"}
-                    <line x1={s.a.location.x} y1={s.a.location.y} x2={s.b.location.x} y2={s.b.location.y}
-                          stroke="#ff3e00" stroke-width="2"/>
+                    <line id={s.id} class="trackElement"
+                          x1={s.a.location.x} y1={s.a.location.y} x2={s.b.location.x} y2={s.b.location.y}/>
                 {/if}
+            {/each}
+            {#each points as p}
+                <circle id={p.id} class="trackElement" cx={p.location.x} cy={p.location.y} r="5"/>
             {/each}
         </g>
     </svg>
@@ -136,5 +144,23 @@
         width: 100%;
         height: 100%;
         background-color: #1a1a1a;
+    }
+
+    svg circle {
+        fill: #ccc;
+    }
+
+    svg circle:hover {
+        fill: #ff3e00;
+    }
+
+    svg line {
+        stroke: #ccc;
+        stroke-width: 2px;
+    }
+
+    svg line:hover {
+        stroke: #ff3e00;
+        stroke-width: 3px;
     }
 </style>

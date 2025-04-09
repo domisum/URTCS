@@ -4,11 +4,11 @@
     import {createPoint, setTempPoint} from "../../track.svelte";
 
     function handleMove(move: ToolMove) {
-        setTempPoint(0, move.svgLocation.location);
+        setTempPoint(0, move.svgMouseLocation.location);
     }
 
     function handleClick(click: ToolClick) {
-        createPoint(click.svgLocation.location);
+        createPoint(click.svgMouseLocation.location);
     }
 </script>
 

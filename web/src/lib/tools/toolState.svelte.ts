@@ -1,11 +1,11 @@
 import type {SvgMouseLocation} from "../../datatypes";
 
 export interface ToolMove {
-    svgLocation: SvgMouseLocation;
+    svgMouseLocation: SvgMouseLocation;
 }
 
 export interface ToolClick {
-    svgLocation: SvgMouseLocation;
+    svgMouseLocation: SvgMouseLocation;
 }
 
 export interface ITool {

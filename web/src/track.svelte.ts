@@ -4,6 +4,21 @@ import _ from "lodash";
 export let points: Point[] = $state([]);
 export let segments: Segment[] = $state([]);
 
+export function getPermanentPoint(id: string): Point | undefined {
+    return points.find(p => p.id === id && !p.id.startsWith("p-tmp-"));
+}
+
+export function createPoint(location: Location): Point {
+    const point = {id: "p-" + randomString(10), location}
+    points.push(point);
+    return point;
+}
+
+export function createSegment(segment: Segment) {
+    segment.id = "s-" + randomString(10);
+    segments.push(segment);
+}
+
 export function setTempPoint(index: number, location: Location): Point {
     const tpOpt = points.find(p => p.id === "p-tmp-" + index);
     if (tpOpt) {
@@ -16,20 +31,13 @@ export function setTempPoint(index: number, location: Location): Point {
     }
 }
 
+export function removeTempPoint(index: number) {
+    _.remove(points, p => p.id == "p-tmp-" + index);
+}
+
 export function removeTempElements() {
     _.remove(points, p => p.id.startsWith("p-tmp-"));
     _.remove(segments, s => s.id.startsWith("s-tmp-"));
-}
-
-export function createPoint(location: Location): Point {
-    const point = {id: "p-" + randomString(10), location}
-    points.push(point);
-    return point;
-}
-
-export function createSegment(segment: Segment) {
-    segment.id = "s-" + randomString(10);
-    segments.push(segment);
 }
 
 

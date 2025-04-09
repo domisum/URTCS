@@ -26,4 +26,5 @@ export interface RadialSegment extends Segment {
 
 export interface SvgMouseLocation {
     location: Location;
+    hoveredTrackElementIds: string[];
 }
