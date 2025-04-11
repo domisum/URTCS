@@ -2,10 +2,11 @@
     import Tool from "./Tool.svelte";
     import type {ToolClick, ToolMove} from "./toolState.svelte";
     import {distance, type Location, type Point, type RadialSegment} from "../../datatypes.svelte";
-    import {determinePoint, selectPoint} from "./pointSelection.svelte";
+    import {determinePoint, previewPoint} from "./pointSelection.svelte";
     import {
         createSegment,
-        points, removeTempElement,
+        points,
+        removeTempElement,
         removeTempElements,
         segments,
         setTempElement
@@ -16,8 +17,7 @@
     interface State {
         a?: Point;
         b?: Point;
-
-        tempSegment?: RadialSegment;
+        sg?: RadialSegment;
     }
 
     interface RadialCurvature {
@@ -25,54 +25,52 @@
         turnDirection: "l" | "r";
     }
 
-    let s: State = $state({});
+    let st: State = $state({});
 
     function reset() {
         removeTempElements();
-        s = {};
+        st = {};
     }
 
     function handleMove(move: ToolMove) {
-        if (s.a) {
-            s.tempSegment = {type: "radial", a: s.a, b: s.b, radius: -1, turnDirection: "r"} as RadialSegment;
+        if (st.a) {
+            st.sg = {type: "radial", a: st.a, b: st.b, radius: -1, turnDirection: "r"} as RadialSegment;
         }
 
-        if (!s.b) {
-            const selectedPoint = selectPoint(move.svgCursor, [s.a, s.b]);
-            if (selectedPoint) removeTempElement(points);
-            const point = selectedPoint || setTempElement(points, {location: move.svgCursor.location} as Point);
-
-            if (s.tempSegment) {
-                s.tempSegment.b = point;
-                s.tempSegment.radius = distance(s.tempSegment.a.location, s.tempSegment.b.location) / 1.5;
+        if (!st.b) {
+            const point = previewPoint(move.svgCursor, [st.a, st.b]);
+            if (st.sg) {
+                st.sg.b = point;
+                st.sg.radius = distance(st.sg.a.location, st.sg.b.location) / 1.5;
             }
-        } else if (s.b && s.tempSegment) {
+        } else if (st.b && st.sg) {
             removeTempElement(points);
             const curvature = calculateRadialCurvature(move.svgCursor.location);
-            s.tempSegment = _.extend(s.tempSegment, curvature);
+            st.sg = _.extend(st.sg, curvature);
         }
 
-        if (s.tempSegment)
-            setTempElement(segments, s.tempSegment)
+        if (st.sg) {
+            setTempElement(segments, st.sg)
+        }
     }
 
     function handleClick(click: ToolClick) {
-        if (!s.a) {
-            s.a = determinePoint(click.svgCursor, []);
-        } else if (!s.b) {
-            s.b = determinePoint(click.svgCursor, [s.a]);
+        if (!st.a) {
+            st.a = determinePoint(click.svgCursor, []);
+        } else if (!st.b) {
+            st.b = determinePoint(click.svgCursor, [st.a]);
         } else {
-            const curvature = calculateRadialCurvature(click.svgCursor.location)
-            createSegment({type: "radial", a: s.a, b: s.b, ...curvature} as RadialSegment)
+            const curvature = calculateRadialCurvature(click.svgCursor.location);
+            createSegment({type: "radial", a: st.a, b: st.b, ...curvature} as RadialSegment);
             reset();
         }
         handleMove(click);
     }
 
     function calculateRadialCurvature(location: Location): RadialCurvature {
-        if (!s.a || !s.b) throw new Error("a and b are missing");
-        const al = s.a.location;
-        const bl = s.b.location;
+        if (!st.a || !st.b) throw new Error("a and b are missing");
+        const al = st.a.location;
+        const bl = st.b.location;
 
         const z1 = complex(al.x, al.y);
         const z2 = complex(bl.x, bl.y);
