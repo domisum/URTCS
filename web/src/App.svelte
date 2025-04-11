@@ -2,7 +2,7 @@
     import Sidebar from './lib/Sidebar.svelte'
     import {points, removeTempElement, segments} from "./track.svelte";
     import type {RadialSegment, SvgCursor} from "./datatypes.svelte";
-    import {activeTool, deactivateTool} from "./lib/tools/toolState.svelte";
+    import {activeTool, deactivateTool} from "./lib/tool/toolState.svelte";
 
     interface Viewport {
         offsetX: number;

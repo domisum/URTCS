@@ -1,7 +1,7 @@
 <script lang="ts">
-    import ToolSidebarGroup from "./tools/ToolSidebarGroup.svelte";
+    import ToolSidebarGroup from "./tool/ToolSidebarGroup.svelte";
     import RenderToggleSidebarGroup from "./RenderToggleSidebarGroup.svelte";
-    import {activeTool} from "./tools/toolState.svelte";
+    import {activeTool} from "./tool/toolState.svelte";
 
     let {isMouseNear} = $props();
 </script>

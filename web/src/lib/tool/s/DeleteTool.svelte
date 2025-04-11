@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Tool from "./Tool.svelte";
-    import type {ToolClick} from "./toolState.svelte";
-    import {deleteTrackElement} from "../../track.svelte";
+    import Tool from "../Tool.svelte";
+    import type {ToolClick} from "../toolState.svelte.js";
+    import {deleteTrackElement} from "../../../track.svelte.js";
 
     function handleClick(click: ToolClick) {
         const ids = click.svgCursor.hoveredTrackElementIds;

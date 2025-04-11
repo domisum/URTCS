@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Tool from "./Tool.svelte";
-    import type {ToolClick, ToolMove} from "./toolState.svelte";
-    import {distance, type Location, type Point, type RadialSegment} from "../../datatypes.svelte";
-    import {determinePoint, previewPoint} from "./pointSelection.svelte";
+    import Tool from "../Tool.svelte";
+    import type {ToolClick, ToolMove} from "../toolState.svelte.js";
+    import {distance, type Location, type Point, type RadialSegment} from "../../../datatypes.svelte.js";
+    import {determinePoint, previewPoint} from "../pointSelection.svelte.js";
     import {
         createSegment,
         points,
@@ -10,7 +10,7 @@
         removeTempElements,
         segments,
         setTempElement
-    } from "../../track.svelte";
+    } from "../../../track.svelte.js";
     import _ from "lodash";
     import {abs, add, complex, type Complex, cross, divide, multiply, norm, pow, subtract} from "mathjs";
 
