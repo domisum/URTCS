@@ -1,7 +1,7 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
     import {points, removeTempElements, segments} from "./track.svelte";
-    import type {Point, RadialSegment, SvgMouseLocation} from "./datatypes";
+    import type {RadialSegment, SvgCursor} from "./datatypes.svelte";
     import {activeTool} from "./lib/tools/toolState.svelte";
 
     interface Viewport {
@@ -20,12 +20,7 @@
     let svgElement: SVGElement;
     let dragStart: null | SvgCoordinate = null;
 
-    const a = {id: "p-a", location: {x: 100, y: 100}} as Point;
-    const b = {id: "p-b", location: {x: 200, y: 200}} as Point;
-    points.push(a, b);
-    segments.push({id: "s-xd", type: "radial", a, b, r: 200, turnDirection: "r"} as RadialSegment)
-
-    function getSvgLocation(mouseX: number, mouseY: number): SvgMouseLocation {
+    function getSvgLocation(mouseX: number, mouseY: number): SvgCursor {
         const rect = svgElement.getBoundingClientRect();
         let x = (mouseX - rect.left - viewport.offsetX) / viewport.scale;
         let y = (mouseY - rect.top - viewport.offsetY) / viewport.scale;
@@ -50,9 +45,9 @@
         }
 
         const itool = activeTool.itool;
-        if (itool) {
+        if (itool && itool.handleMove) {
             const svgLocation = getSvgLocation(event.clientX, event.clientY);
-            itool.handleMove({svgMouseLocation: svgLocation})
+            itool.handleMove({svgCursor: svgLocation})
         }
     }
 
@@ -79,9 +74,9 @@
 
     function handleClick(event: MouseEvent) {
         const itool = activeTool.itool;
-        if (itool) {
+        if (itool && itool.handleClick) {
             const svgLocation = getSvgLocation(event.clientX, event.clientY);
-            itool.handleClick({svgMouseLocation: svgLocation});
+            itool.handleClick({svgCursor: svgLocation});
         }
     }
 
@@ -99,7 +94,7 @@
     function generateRadialSegmentSvgPath(s: any): string {
         const rs = <RadialSegment>s;
         const sweepFlag = rs.turnDirection === "r" ? "1" : "0";
-        return `M ${rs.a.location.x} ${rs.a.location.y} A ${(rs.r)} ${(rs.r)} 0 0 ${sweepFlag} ${rs.b.location.x} ${rs.b.location.y}`;
+        return `M ${rs.a.location.x} ${rs.a.location.y} A ${(rs.radius)} ${(rs.radius)} 0 0 ${sweepFlag} ${rs.b.location.x} ${rs.b.location.y}`;
     }
 </script>
 

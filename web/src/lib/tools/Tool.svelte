@@ -7,16 +7,20 @@
         children: any
     }
 
-    let {id, displayName, handleMove, handleClick, children}: Props = $props();
+    let {id, displayName, activate, deactivate, handleMove, handleClick, children}: Props = $props();
 
     function onclick(event: MouseEvent) {
         if (event.button !== 0)
             return;
 
         removeTempElements();
-        if (activeTool.itool === null || activeTool.itool.id !== id)
-            activeTool.itool = {id, handleMove, handleClick};
-        else
+        if (activeTool.itool && activeTool.itool.deactivate)
+            activeTool.itool.deactivate();
+        if (activeTool.itool === null || activeTool.itool.id !== id) {
+            activeTool.itool = {id, activate, deactivate, handleMove, handleClick};
+            if (activeTool.itool.activate)
+                activeTool.itool.activate();
+        } else
             activeTool.itool = null;
     }
 </script>

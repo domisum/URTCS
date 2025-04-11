@@ -1,17 +1,19 @@
-import type {SvgMouseLocation} from "../../datatypes";
+import type {SvgCursor} from "../../datatypes.svelte";
 
 export interface ToolMove {
-    svgMouseLocation: SvgMouseLocation;
+    svgCursor: SvgCursor;
 }
 
 export interface ToolClick {
-    svgMouseLocation: SvgMouseLocation;
+    svgCursor: SvgCursor;
 }
 
 export interface ITool {
     id: string;
-    handleMove: (move: ToolMove) => void
-    handleClick: (click: ToolClick) => void
+    activate?: () => void;
+    deactivate?: () => void;
+    handleMove?: (move: ToolMove) => void
+    handleClick?: (click: ToolClick) => void
 }
 
 export interface ActiveTool {

@@ -1,4 +1,4 @@
-import type {Location, Point, Segment} from "./datatypes";
+import type {Location, Point, Segment} from "./datatypes.svelte";
 import _ from "lodash";
 
 export let points: Point[] = $state([]);
