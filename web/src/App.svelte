@@ -2,7 +2,7 @@
     import Sidebar from './lib/Sidebar.svelte'
     import {points, removeTempElement, segments} from "./track.svelte";
     import type {RadialSegment, SvgCursor} from "./datatypes.svelte";
-    import {activeTool} from "./lib/tools/toolState.svelte";
+    import {activeTool, deactivateTool} from "./lib/tools/toolState.svelte";
 
     interface Viewport {
         offsetX: number;
@@ -91,6 +91,12 @@
         handleMouseMove(event);
     }
 
+    function handleKeypress(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            deactivateTool();
+        }
+    }
+
     function generateRadialSegmentSvgPath(s: any): string {
         const rs = <RadialSegment>s;
         const sweepFlag = rs.turnDirection === "r" ? "1" : "0";
@@ -98,8 +104,8 @@
     }
 </script>
 
-<main>
-    <!-- svelte-ignore <a11y_no_noninteractive_element_interactions> -->
+<!-- svelte-ignore <a11y_no_noninteractive_element_interactions> -->
+<main onkeydown={handleKeypress}>
     <svg role="application" bind:this={svgElement}
          onmousemove={handleMouseMove} onmouseenter={handleMouseMove} onmouseleave={handleMouseLeave}
          onmousedown={handleMouseDown} onmouseup={handleMouseUp} onwheel={handleWheel}>

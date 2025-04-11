@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {activeTool, type ITool} from './toolState.svelte'
+    import {toggleTool, activeTool, deactivateTool, type ITool} from './toolState.svelte'
     import {removeTempElements} from "../../track.svelte";
 
     interface Props extends ITool {
@@ -12,16 +12,7 @@
     function onclick(event: MouseEvent) {
         if (event.button !== 0)
             return;
-
-        removeTempElements();
-        if (activeTool.itool && activeTool.itool.deactivate)
-            activeTool.itool.deactivate();
-        if (activeTool.itool === null || activeTool.itool.id !== id) {
-            activeTool.itool = {id, activate, deactivate, handleMove, handleClick};
-            if (activeTool.itool.activate)
-                activeTool.itool.activate();
-        } else
-            activeTool.itool = null;
+        toggleTool({id, activate, deactivate, handleMove, handleClick});
     }
 </script>
 
