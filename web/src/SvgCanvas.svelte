@@ -76,7 +76,7 @@
         }
     }
 
-    function handleMouseLeave(event: MouseEvent) {
+    function handleMouseLeave() {
         removeTempElement(points);
     }
 

@@ -1,6 +1,5 @@
 <script lang="ts">
-    import {toggleTool, activeTool, deactivateTool, type ITool} from './toolState.svelte'
-    import {removeTempElements} from "../../track.svelte";
+    import {activeTool, type ITool, toggleTool} from './toolState.svelte'
 
     interface Props extends ITool {
         displayName: string
