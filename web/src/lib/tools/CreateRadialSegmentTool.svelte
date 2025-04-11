@@ -3,7 +3,13 @@
     import type {ToolClick, ToolMove} from "./toolState.svelte";
     import {distance, type Location, type Point, type RadialSegment} from "../../datatypes.svelte";
     import {determinePoint, selectPoint} from "./pointSelection.svelte";
-    import {createSegment, removeTempElements, removeTempPoint, segments, setTempPoint} from "../../track.svelte";
+    import {
+        createSegment,
+        points, removeTempElement,
+        removeTempElements,
+        segments,
+        setTempElement
+    } from "../../track.svelte";
     import _ from "lodash";
     import {abs, add, complex, type Complex, cross, divide, multiply, norm, pow, subtract} from "mathjs";
 
@@ -27,29 +33,32 @@
     }
 
     function handleMove(move: ToolMove) {
+        if (s.a) {
+            s.tempSegment = {type: "radial", a: s.a, b: s.b, radius: -1, turnDirection: "r"} as RadialSegment;
+        }
+
         if (!s.b) {
             const selectedPoint = selectPoint(move.svgCursor, [s.a, s.b]);
-            if (selectedPoint) removeTempPoint(0);
-            const point = selectedPoint || setTempPoint(0, move.svgCursor.location);
+            if (selectedPoint) removeTempElement(points);
+            const point = selectedPoint || setTempElement(points, {location: move.svgCursor.location} as Point);
 
             if (s.tempSegment) {
                 s.tempSegment.b = point;
-                s.tempSegment.radius = distance(s.tempSegment.a.location, s.tempSegment.b.location) * 2;
+                s.tempSegment.radius = distance(s.tempSegment.a.location, s.tempSegment.b.location) / 1.5;
             }
         } else if (s.b && s.tempSegment) {
-            removeTempPoint(0);
+            removeTempElement(points);
             const curvature = calculateRadialCurvature(move.svgCursor.location);
             s.tempSegment = _.extend(s.tempSegment, curvature);
         }
+
+        if (s.tempSegment)
+            setTempElement(segments, s.tempSegment)
     }
 
     function handleClick(click: ToolClick) {
         if (!s.a) {
             s.a = determinePoint(click.svgCursor, []);
-            s.tempSegment = {
-                id: "s-tmp-0", type: "radial", a: s.a, b: s.b, radius: -1, turnDirection: "r"
-            } as RadialSegment;
-            segments.push(s.tempSegment);
         } else if (!s.b) {
             s.b = determinePoint(click.svgCursor, [s.a]);
         } else {

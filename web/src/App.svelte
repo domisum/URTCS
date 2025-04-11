@@ -1,6 +1,6 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
-    import {points, removeTempElements, segments} from "./track.svelte";
+    import {points, removeTempElement, segments} from "./track.svelte";
     import type {RadialSegment, SvgCursor} from "./datatypes.svelte";
     import {activeTool} from "./lib/tools/toolState.svelte";
 
@@ -81,7 +81,7 @@
     }
 
     function handleMouseLeave(event: MouseEvent) {
-        removeTempElements();
+        removeTempElement(points);
     }
 
     function handleWheel(event: WheelEvent) {

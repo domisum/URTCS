@@ -1,10 +1,11 @@
 <script lang="ts">
     import Tool from "./Tool.svelte";
     import type {ToolClick, ToolMove} from "./toolState.svelte";
-    import {createPoint, setTempPoint} from "../../track.svelte";
+    import {createPoint, points, setTempElement} from "../../track.svelte";
+    import type {Point} from "../../datatypes.svelte";
 
     function handleMove(move: ToolMove) {
-        setTempPoint(0, move.svgCursor.location);
+        setTempElement(points, {location: move.svgCursor.location} as Point);
     }
 
     function handleClick(click: ToolClick) {

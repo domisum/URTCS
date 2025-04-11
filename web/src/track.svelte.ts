@@ -4,8 +4,11 @@ import _ from "lodash";
 export let points: Point[] = $state([]);
 export let segments: Segment[] = $state([]);
 
+const TMP_ID = "tmp";
+
+
 export function getPermanentPoint(id: string): Point | undefined {
-    return points.find(p => p.id === id && !p.id.startsWith("p-tmp-"));
+    return points.find(p => p.id === id && p.id !== TMP_ID);
 }
 
 export function createPoint(location: Location): Point {
@@ -31,27 +34,34 @@ function doesSegmentContainAnyPoint(segment: Segment, points: Point[]): boolean 
     return false;
 }
 
-export function setTempPoint(index: number, location: Location): Point {
-    const tpOpt = points.find(p => p.id === "p-tmp-" + index);
-    if (tpOpt) {
-        tpOpt.location = location;
-        return tpOpt;
+/**
+ * TEMP ELEMENTS
+ */
+export function setTempElement<T extends { id: string }>(collection: T[], attributes: T): T {
+    const elemOpt = collection.find(p => p.id === TMP_ID);
+    if (elemOpt) {
+        Object.assign(elemOpt, attributes);
+        return elemOpt;
     } else {
-        let tp = {id: "p-tmp-" + index, location: location};
-        points.push(tp);
-        return tp;
+        let tempElem = {...attributes, id: TMP_ID} as T;
+        collection.push(tempElem);
+        return tempElem;
     }
 }
 
-export function removeTempPoint(index: number) {
-    _.remove(points, p => p.id == "p-tmp-" + index);
+export function removeTempElement<T extends { id: string }>(collection: T[]) {
+    _.remove(collection, p => p.id == TMP_ID);
 }
 
 export function removeTempElements() {
-    _.remove(points, p => p.id.startsWith("p-tmp-"));
-    _.remove(segments, s => s.id.startsWith("s-tmp-"));
+    removeTempElement(points);
+    removeTempElement(segments);
 }
 
+
+/**
+ * NO BACKEND CONNECTED -> WORKAROUND
+ */
 
 function randomString(length: number) {
     let result = '';
