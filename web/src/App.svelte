@@ -11,6 +11,7 @@
 
     function onkeydown(event: KeyboardEvent) {
         if (event.key === 'Escape') {
+            event.preventDefault();
             deactivateTool();
         }
     }
