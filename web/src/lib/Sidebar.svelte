@@ -22,23 +22,26 @@
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         z-index: 10;
-    }
-
-    .sidebar-strip.visible {
-        transform: translateX(0);
+        pointer-events: none;
     }
 
     .sidebar {
         position: relative;
         left: 0;
         top: 50%;
-        background-color: #2a2a2a;
-        opacity: 0.8;
         padding: 10px;
         transform: translateY(-50%);
 
+        background-color: #2a2a2a;
+        opacity: 0.8;
+
+        pointer-events: visible;
         display: flex;
         flex-direction: column;
         gap: 30px;
+    }
+
+    .sidebar-strip.visible {
+        transform: translateX(0);
     }
 </style>
