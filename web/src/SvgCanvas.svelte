@@ -15,13 +15,11 @@
     }
 
     let viewport: Viewport = $state({offsetX: 0, offsetY: 0, scale: 1});
-    let svgElement: SVGElement;
     let dragStart: null | SvgCoordinate = null;
 
     function getSvgLocation(mouseX: number, mouseY: number): SvgCursor {
-        const rect = svgElement.getBoundingClientRect();
-        let x = (mouseX - rect.left - viewport.offsetX) / viewport.scale;
-        let y = (mouseY - rect.top - viewport.offsetY) / viewport.scale;
+        let x = mouseX / viewport.scale - viewport.offsetX;
+        let y = mouseY / viewport.scale - viewport.offsetY;
 
         let hoveredElements = document.elementsFromPoint(mouseX, mouseY);
         let hoveredTrackElementIds = [];
@@ -35,8 +33,8 @@
 
     function handleMouseMove(event: MouseEvent) {
         if (dragStart !== null) {
-            viewport.offsetX += event.movementX;
-            viewport.offsetY += event.movementY;
+            viewport.offsetX += event.movementX / viewport.scale;
+            viewport.offsetY += event.movementY / viewport.scale;
             return;
         }
 
@@ -54,9 +52,11 @@
     }
 
     function handleMouseUp(event: MouseEvent) {
-        const dragEnd = {x: event.clientX, y: event.clientY};
-        if (isClick(<SvgCoordinate>dragStart, dragEnd)) {
-            handleClick(event);
+        if (dragStart) {
+            const dragEnd = {x: event.clientX, y: event.clientY};
+            if (isClick(dragStart, dragEnd)) {
+                handleClick(event);
+            }
         }
         dragStart = null;
     }
@@ -78,12 +78,20 @@
 
     function handleMouseLeave() {
         removeTempElement(points);
+        dragStart = null;
     }
 
     function handleWheel(event: WheelEvent) {
         event.preventDefault();
-        const delta = event.deltaY > 0 ? 0.9 : 1.1;
-        viewport.scale *= delta;
+
+        let scaleMultiplier = 1.1;
+        if (event.deltaY > 0)
+            scaleMultiplier = 1 / scaleMultiplier;
+
+        viewport.offsetX -= event.clientX / viewport.scale * (1 - 1 / scaleMultiplier);
+        viewport.offsetY -= event.clientY / viewport.scale * (1 - 1 / scaleMultiplier);
+        viewport.scale *= scaleMultiplier;
+
         handleMouseMove(event);
     }
 
@@ -95,10 +103,9 @@
 </script>
 
 <!-- svelte-ignore <a11y_no_noninteractive_element_interactions> -->
-<svg role="application" bind:this={svgElement}
-     onmousemove={handleMouseMove} onmouseenter={handleMouseMove} onmouseleave={handleMouseLeave}
+<svg role="application" onmousemove={handleMouseMove} onmouseenter={handleMouseMove} onmouseleave={handleMouseLeave}
      onmousedown={handleMouseDown} onmouseup={handleMouseUp} onwheel={handleWheel}>
-    <g transform="translate({viewport.offsetX} {viewport.offsetY}) scale({viewport.scale})">
+    <g transform="scale({viewport.scale}) translate({viewport.offsetX} {viewport.offsetY})">
         {#each segments as s}
             {#if s.type === "straight"}
                 <line id={s.id} class="trackElement"
