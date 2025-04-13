@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {getRenderState, toggleRenderState} from "./renderState.svelte";
+    import {getRenderState, toggleRenderState} from "./renderState.svelte.js";
 
     interface Props {
         id: string;

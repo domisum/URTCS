@@ -4,7 +4,7 @@
     import {activeTool} from "../tool/toolState.svelte.js";
     import SvgPoint from "./SvgPoint.svelte";
     import SvgSegment from "./SvgSegment.svelte";
-    import {getRenderState} from "../renderState.svelte";
+    import {getRenderState} from "../renderToggle/renderState.svelte.js";
 
     interface Viewport {
         offsetX: number;
