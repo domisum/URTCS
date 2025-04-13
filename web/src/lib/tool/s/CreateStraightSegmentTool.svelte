@@ -1,9 +1,9 @@
 <script lang="ts">
     import Tool from "../Tool.svelte";
     import type {ToolClick, ToolMove} from "../toolState.svelte.js";
-    import type {Point, StraightSegment} from "../../../datatypes.svelte.js";
     import {createSegment, removeTempElements, segments, setTempElement,} from "../../../track.svelte.js";
     import {determinePoint, previewPoint} from "../pointSelection.svelte.js";
+    import type {Point, StraightSegment} from "../../../model";
 
     interface State {
         a?: Point;

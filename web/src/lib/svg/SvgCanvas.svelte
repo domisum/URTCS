@@ -1,7 +1,9 @@
 <script lang="ts">
-    import {points, removeTempElement, segments} from "./track.svelte";
-    import type {RadialSegment, SvgCursor} from "./datatypes.svelte";
-    import {activeTool} from "./lib/tool/toolState.svelte";
+    import {points, removeTempElement, segments} from "../../track.svelte.js";
+    import {convertCoordinateFromSvg, type SvgCoordinate, type SvgCursor} from "./modelSvg.svelte.js";
+    import {activeTool} from "../tool/toolState.svelte.js";
+    import SvgPoint from "./SvgPoint.svelte";
+    import SvgSegment from "./SvgSegment.svelte";
 
     interface Viewport {
         offsetX: number;
@@ -9,15 +11,10 @@
         scale: number;
     }
 
-    interface SvgCoordinate {
-        x: number;
-        y: number;
-    }
-
     let viewport: Viewport = $state({offsetX: 0, offsetY: 0, scale: 1});
     let dragStart: null | SvgCoordinate = null;
 
-    function getSvgLocation(mouseX: number, mouseY: number): SvgCursor {
+    function getSvgCursor(mouseX: number, mouseY: number): SvgCursor {
         let x = mouseX / viewport.scale - viewport.offsetX;
         let y = mouseY / viewport.scale - viewport.offsetY;
 
@@ -28,7 +25,9 @@
                 hoveredTrackElementIds.push(hoveredElements[i].id);
         }
 
-        return {location: {x, y}, hoveredTrackElementIds};
+        const coordinate = {x, y} as SvgCoordinate;
+        const location = convertCoordinateFromSvg(coordinate);
+        return {coordinate, location, hoveredTrackElementIds};
     }
 
     function handleMouseMove(event: MouseEvent) {
@@ -40,7 +39,7 @@
 
         const itool = activeTool.itool;
         if (itool && itool.handleMove) {
-            const svgLocation = getSvgLocation(event.clientX, event.clientY);
+            const svgLocation = getSvgCursor(event.clientX, event.clientY);
             itool.handleMove({svgCursor: svgLocation})
         }
     }
@@ -71,7 +70,7 @@
     function handleClick(event: MouseEvent) {
         const itool = activeTool.itool;
         if (itool && itool.handleClick) {
-            const svgLocation = getSvgLocation(event.clientX, event.clientY);
+            const svgLocation = getSvgCursor(event.clientX, event.clientY);
             itool.handleClick({svgCursor: svgLocation});
         }
     }
@@ -94,28 +93,18 @@
 
         handleMouseMove(event);
     }
-
-    function generateRadialSegmentSvgPath(s: any): string {
-        const rs = <RadialSegment>s;
-        const sweepFlag = rs.turnDirection === "r" ? "1" : "0";
-        return `M ${rs.a.location.x} ${rs.a.location.y} A ${(rs.radius)} ${(rs.radius)} 0 0 ${sweepFlag} ${rs.b.location.x} ${rs.b.location.y}`;
-    }
 </script>
+
 
 <!-- svelte-ignore <a11y_no_noninteractive_element_interactions> -->
 <svg role="application" onmousemove={handleMouseMove} onmouseenter={handleMouseMove} onmouseleave={handleMouseLeave}
      onmousedown={handleMouseDown} onmouseup={handleMouseUp} onwheel={handleWheel}>
     <g transform="scale({viewport.scale}) translate({viewport.offsetX} {viewport.offsetY})">
-        {#each segments as s}
-            {#if s.type === "straight"}
-                <line id={s.id} class="trackElement"
-                      x1={s.a.location.x} y1={s.a.location.y} x2={s.b.location.x} y2={s.b.location.y}/>
-            {:else if s.type === "radial"}
-                <path id={s.id} class="trackElement" d={generateRadialSegmentSvgPath(s)}/>
-            {/if}
+        {#each segments as segment}
+            <SvgSegment {segment}/>
         {/each}
-        {#each points as p}
-            <circle id={p.id} class="trackElement" cx={p.location.x} cy={p.location.y} r="5"/>
+        {#each points as point}
+            <SvgPoint {point}/>
         {/each}
     </g>
 </svg>
@@ -129,34 +118,5 @@
         width: 100%;
         height: 100%;
         background-color: #1a1a1a;
-    }
-
-    svg circle {
-        fill: #ccc;
-    }
-
-    svg circle:hover {
-        fill: #ff3e00;
-    }
-
-    svg line {
-        stroke: #ccc;
-        stroke-width: 2px;
-    }
-
-    svg line:hover {
-        stroke: #ff3e00;
-        stroke-width: 3px;
-    }
-
-    svg path {
-        stroke: #ccc;
-        stroke-width: 2px;
-        fill: none;
-    }
-
-    svg path:hover {
-        stroke: #ff3e00;
-        stroke-width: 3px;
     }
 </style>

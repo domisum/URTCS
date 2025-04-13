@@ -1,5 +1,5 @@
-import type {SvgCursor} from "../../datatypes.svelte";
-import {removeTempElements} from "../../track.svelte";
+import type {SvgCursor} from "../svg/modelSvg.svelte.js";
+import {removeTempElements} from "../../track.svelte.js";
 
 export interface ToolMove {
     svgCursor: SvgCursor;

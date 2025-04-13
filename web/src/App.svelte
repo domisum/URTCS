@@ -1,7 +1,7 @@
 <script lang="ts">
     import Sidebar from './lib/Sidebar.svelte'
     import {deactivateTool} from "./lib/tool/toolState.svelte";
-    import SvgCanvas from "./SvgCanvas.svelte";
+    import SvgCanvas from "./lib/svg/SvgCanvas.svelte";
 
     let isMouseNearSidebar = $state(false);
 

@@ -1,5 +1,6 @@
-import type {Point, SvgCursor} from "../../datatypes.svelte";
-import {createPoint, getPermanentPoint, points, removeTempElement, setTempElement} from "../../track.svelte";
+import type {SvgCursor} from "../svg/modelSvg.svelte.js";
+import {createPoint, getPermanentPoint, points, removeTempElement, setTempElement} from "../../track.svelte.js";
+import type {Point} from "../../model";
 
 export function selectPoint(svgCursor: SvgCursor, exclude: (Point | undefined)[]): Point | undefined {
     outer: for (const id of svgCursor.hoveredTrackElementIds) {

@@ -1,7 +1,7 @@
 <script lang="ts">
     import Tool from "../Tool.svelte";
     import type {ToolClick, ToolMove} from "../toolState.svelte.js";
-    import {distance, type Location, type Point, type RadialSegment} from "../../../datatypes.svelte.js";
+    import {distance} from "../../svg/modelSvg.svelte.js";
     import {determinePoint, previewPoint} from "../pointSelection.svelte.js";
     import {
         createSegment,
@@ -13,6 +13,7 @@
     } from "../../../track.svelte.js";
     import _ from "lodash";
     import {abs, add, complex, type Complex, cross, divide, multiply, norm, pow, subtract} from "mathjs";
+    import type {Coordinate, Point, RadialSegment} from "../../../model";
 
     interface State {
         a?: Point;
@@ -67,7 +68,7 @@
         handleMove(click);
     }
 
-    function calculateRadialCurvature(location: Location): RadialCurvature {
+    function calculateRadialCurvature(location: Coordinate): RadialCurvature {
         if (!st.a || !st.b) throw new Error("a and b are missing");
         const al = st.a.location;
         const bl = st.b.location;

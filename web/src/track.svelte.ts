@@ -1,5 +1,5 @@
-import type {Location, Point, Segment} from "./datatypes.svelte";
 import _ from "lodash";
+import type {Coordinate, Point, Segment} from "./model";
 
 export let points: Point[] = $state([]);
 export let segments: Segment[] = $state([]);
@@ -11,7 +11,7 @@ export function getPermanentPoint(id: string): Point | undefined {
     return points.find(p => p.id === id && p.id !== TMP_ID);
 }
 
-export function createPoint(location: Location): Point {
+export function createPoint(location: Coordinate): Point {
     const point = {id: "p-" + randomString(10), location}
     points.push(point);
     return point;
