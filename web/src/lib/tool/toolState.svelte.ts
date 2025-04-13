@@ -13,8 +13,8 @@ export interface ITool {
     id: string;
     activate?: () => void;
     deactivate?: () => void;
-    handleMove?: (move: ToolMove) => void
-    handleClick?: (click: ToolClick) => void
+    handleMove?: (move: ToolMove) => void;
+    handleClick?: (click: ToolClick) => void;
 }
 
 export interface ActiveTool {

@@ -69,7 +69,7 @@
     }
 
     function calculateRadialCurvature(location: Coordinate): RadialCurvature {
-        if (!st.a || !st.b) throw new Error("a and b are missing");
+        if (!st.a || !st.b) throw new Error("a or b are missing");
         const al = st.a.location;
         const bl = st.b.location;
 

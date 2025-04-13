@@ -4,6 +4,7 @@
     import {activeTool} from "../tool/toolState.svelte.js";
     import SvgPoint from "./SvgPoint.svelte";
     import SvgSegment from "./SvgSegment.svelte";
+    import {getRenderState} from "../renderState.svelte";
 
     interface Viewport {
         offsetX: number;
@@ -103,9 +104,11 @@
         {#each segments as segment}
             <SvgSegment {segment}/>
         {/each}
-        {#each points as point}
-            <SvgPoint {point}/>
-        {/each}
+        {#if getRenderState("points")}
+            {#each points as point}
+                <SvgPoint {point}/>
+            {/each}
+        {/if}
     </g>
 </svg>
 
