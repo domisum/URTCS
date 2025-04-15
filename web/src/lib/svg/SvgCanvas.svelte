@@ -1,18 +1,11 @@
 <script lang="ts">
     import {points, removeTempElement, segments} from "../../track.svelte.js";
-    import {convertCoordinateFromSvg, type SvgCoordinate, type SvgCursor} from "./modelSvg.svelte.js";
+    import {convertCoordinateToLocation, type SvgCoordinate, type SvgCursor} from "./modelSvg.svelte.js";
     import {activeTool} from "../tool/toolState.svelte.js";
     import SvgPoint from "./SvgPoint.svelte";
     import SvgSegment from "./SvgSegment.svelte";
-    import {getRenderState} from "../renderToggle/renderState.svelte.js";
+    import {getRenderState, viewport} from "../renderToggle/renderState.svelte.js";
 
-    interface Viewport {
-        offsetX: number;
-        offsetY: number;
-        scale: number;
-    }
-
-    let viewport: Viewport = $state({offsetX: 0, offsetY: 0, scale: 1});
     let dragStart: null | SvgCoordinate = null;
 
     function getSvgCursor(mouseX: number, mouseY: number): SvgCursor {
@@ -27,7 +20,7 @@
         }
 
         const coordinate = {x, y} as SvgCoordinate;
-        const location = convertCoordinateFromSvg(coordinate);
+        const location = convertCoordinateToLocation(coordinate);
         return {coordinate, location, hoveredTrackElementIds};
     }
 

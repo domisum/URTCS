@@ -1,7 +1,7 @@
 <script lang="ts">
     import Tool from "../Tool.svelte";
     import type {ToolClick, ToolMove} from "../toolState.svelte.js";
-    import {distance} from "../../svg/modelSvg.svelte.js";
+    import {convertLocationToCoordinate, distance, type SvgCoordinate} from "../../svg/modelSvg.svelte.js";
     import {determinePoint, previewPoint} from "../pointSelection.svelte.js";
     import {
         createSegment,
@@ -13,7 +13,7 @@
     } from "../../../track.svelte.js";
     import _ from "lodash";
     import {abs, add, complex, type Complex, cross, divide, multiply, norm, pow, subtract} from "mathjs";
-    import type {Coordinate, Point, RadialSegment} from "../../../model";
+    import type {Location, Point, RadialSegment} from "../../../model";
 
     interface State {
         a?: Point;
@@ -46,7 +46,7 @@
             }
         } else if (st.b && st.sg) {
             removeTempElement(points);
-            const curvature = calculateRadialCurvature(move.svgCursor.location);
+            const curvature = calculateRadialCurvature(move.svgCursor.coordinate);
             st.sg = _.extend(st.sg, curvature);
         }
 
@@ -61,21 +61,21 @@
         } else if (!st.b) {
             st.b = determinePoint(click.svgCursor, [st.a]);
         } else {
-            const curvature = calculateRadialCurvature(click.svgCursor.location);
+            const curvature = calculateRadialCurvature(click.svgCursor.coordinate);
             createSegment({type: "radial", a: st.a, b: st.b, ...curvature} as RadialSegment);
             reset();
         }
         handleMove(click);
     }
 
-    function calculateRadialCurvature(location: Coordinate): RadialCurvature {
+    function calculateRadialCurvature(coord: SvgCoordinate): RadialCurvature {
         if (!st.a || !st.b) throw new Error("a or b are missing");
-        const al = st.a.location;
-        const bl = st.b.location;
+        const al = convertLocationToCoordinate(st.a.location);
+        const bl = convertLocationToCoordinate(st.b.location);
 
         const z1 = complex(al.x, al.y);
         const z2 = complex(bl.x, bl.y);
-        let z3 = complex(location.x, location.y);
+        let z3 = complex(coord.x, coord.y);
 
         // move z3 closer if radius would be less than min
         const z12m = divide(add(z1, z2), 2);

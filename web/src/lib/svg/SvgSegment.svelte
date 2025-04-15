@@ -1,14 +1,14 @@
 <script lang="ts">
     import type {RadialSegment, Segment} from "../../model";
-    import {convertCoordinateToSvg} from "./modelSvg.svelte";
+    import {convertLocationToCoordinate} from "./modelSvg.svelte";
 
     interface Props {
         segment: Segment;
     }
 
     let {segment}: Props = $props();
-    let aLoc = $derived(convertCoordinateToSvg(segment.a.location));
-    let bLoc = $derived(convertCoordinateToSvg(segment.b.location));
+    let aLoc = $derived(convertLocationToCoordinate(segment.a.location));
+    let bLoc = $derived(convertLocationToCoordinate(segment.b.location));
 
     function generateRadialSegmentSvgPath(): string {
         const rs = <RadialSegment>segment;
@@ -28,7 +28,8 @@
 <style>
     line {
         stroke: #ccc;
-        stroke-width: 2px;
+        stroke-width: 1px;
+        vector-effect: non-scaling-stroke;
     }
 
     line:hover {
@@ -38,8 +39,9 @@
 
     path {
         stroke: #ccc;
-        stroke-width: 2px;
+        stroke-width: 1px;
         fill: none;
+        vector-effect: non-scaling-stroke;
     }
 
     path:hover {

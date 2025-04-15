@@ -1,11 +1,11 @@
-export interface Coordinate {
-    x: number;
-    y: number;
+export interface Location {
+    lat: number;
+    lon: number;
 }
 
 export interface Point {
     id: string;
-    location: Coordinate;
+    location: Location;
 }
 
 export interface Segment {

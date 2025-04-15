@@ -1,9 +1,17 @@
+export interface Viewport {
+    offsetX: number;
+    offsetY: number;
+    scale: number;
+}
+
+export let viewport: Viewport = $state({offsetX: 0, offsetY: 0, scale: 1 / 100});
+
 export interface RenderState {
     [index: string]: boolean;
 }
 
 export let renderState: RenderState = $state({
-    "points": true
+    "points": false
 });
 
 export function getRenderState(id: string): boolean {

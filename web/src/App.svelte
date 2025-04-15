@@ -2,6 +2,8 @@
     import Sidebar from './lib/Sidebar.svelte'
     import {deactivateTool} from "./lib/tool/toolState.svelte";
     import SvgCanvas from "./lib/svg/SvgCanvas.svelte";
+    import {onMount} from "svelte";
+    import {points, segments} from "./track.svelte";
 
     let isMouseNearSidebar = $state(false);
 
@@ -16,6 +18,26 @@
         }
     }
 
+    onMount(async () => {
+        fetch("http://localhost:8000")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const pdict = new Map();
+                for (const p of data.points) {
+                    points.push(p);
+                    pdict.set(p.id, p);
+                }
+                for (const s of data.segments) {
+                    s.a = pdict.get(s.a);
+                    s.b = pdict.get(s.b);
+                    segments.push(s);
+                }
+            }).catch(error => {
+            console.log(error);
+            return [];
+        });
+    });
 </script>
 
 <!-- svelte-ignore <a11y_no_noninteractive_element_interactions> -->
