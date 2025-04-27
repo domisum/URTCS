@@ -3,9 +3,8 @@ import random
 import osmium
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
-from model import Layout, Location, Point, Segment, StraightSegment
+from model import Layout, Location, Point, StraightSegment
 
 app = FastAPI()
 
@@ -16,10 +15,6 @@ def random_tid(t: str, n: int = 6) -> str:
     characters = random.choices(ID_CHARACTERS, k=n)
     idcs = ''.join(characters)
     return f"{t}-{idcs}"
-
-class Container(BaseModel):
-    points: list[Point]
-    segments: list[Segment]
 
 def load(osmfile):
     points = {}
