@@ -1,5 +1,6 @@
 <script lang="ts">
     import {activeTool, type ITool, toggleTool} from './toolState.svelte'
+    import SidebarButton from "../SidebarButton.svelte";
 
     interface Props extends ITool {
         displayName: string
@@ -8,49 +9,19 @@
 
     let {id, displayName, activate, deactivate, handleMove, handleClick, children}: Props = $props();
 
-    function onclick(event: MouseEvent) {
-        if (event.button !== 0)
-            return;
-        toggleTool({id, activate, deactivate, handleMove, handleClick});
-    }
+    const active = (): boolean => activeTool.itool !== null && activeTool.itool.id === id;
+    const onclick = () => toggleTool({id, activate, deactivate, handleMove, handleClick});
 </script>
 
-<button title={displayName} aria-label={displayName}
-        class:active={activeTool.itool !== null && activeTool.itool.id === id} {onclick}>
-    <svg viewBox="0 0 24 24" width="24" height="24">
+<div class="tool">
+    <SidebarButton {displayName} {active} {onclick}>
         {@render children()}
-    </svg>
-</button>
+    </SidebarButton>
+</div>
 
 <style>
-    button {
-        width: 40px;
-        height: 40px;
-        padding: 8px;
-        background-color: #3a3a3a;
-        border: none;
-        color: white;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    button:hover {
-        background-color: #4a4a4a;
-        transform: scale(1.05);
-    }
-
-    button.active {
-        background-color: #ff3e00;
-        transform: scale(1.1);
-    }
-
-    button svg {
-        width: 24px;
-        height: 24px;
-        background: none;
+    .tool > :global(button) {
+        --bg-color-active: #bb2e00;
+        --bg-color-hover: #ff3e00;
     }
 </style>
