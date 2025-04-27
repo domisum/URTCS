@@ -11,18 +11,15 @@ app = FastAPI()
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"])
 
-
 def random_tid(t: str, n: int = 6) -> str:
     ID_CHARACTERS = 'ABCDEFGHKMNPRSTWX23456789'
     characters = random.choices(ID_CHARACTERS, k=n)
     idcs = ''.join(characters)
     return f"{t}-{idcs}"
 
-
 class Container(BaseModel):
     points: list[Point]
     segments: list[Segment]
-
 
 def load(osmfile):
     points = {}
@@ -51,9 +48,7 @@ def load(osmfile):
     print(len(segments))
     return Layout(id="osm", points=list(points.values()), segments=segments, switches=[])
 
-
 layout = load("/home/domisum/Seafile/rail/osm/oberbayern-rail.pbf")
-
 
 @app.get("/")
 async def root():
