@@ -21,7 +21,7 @@
 
 <style>
     .tool > :global(button) {
-        --bg-color-active: #bb2e00;
+        --bg-color-active: #dd3600;
         --bg-color-hover: #ff3e00;
     }
 </style>

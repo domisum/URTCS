@@ -34,7 +34,7 @@
         padding: 10px;
         transform: translateY(-50%);
 
-        background-color: #2a2a2a;
+        background-color: transparent;
         opacity: 0.8;
 
         pointer-events: visible;
