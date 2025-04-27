@@ -11,7 +11,8 @@ export interface RenderState {
 }
 
 export let renderState: RenderState = $state({
-    "points": false
+    "points": false,
+    "switches": true,
 });
 
 export function getRenderState(id: string): boolean {
