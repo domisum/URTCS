@@ -1,64 +1,43 @@
-import random
-from dataclasses import dataclass
+from typing import Annotated
+
+from pydantic import BaseModel, Field, PlainSerializer
 
 
-@dataclass
-class Location:
-    x: float
-    y: float
+class Location(BaseModel):
+    lat: float
+    lon: float
 
 
-@dataclass
-class Distance:
-    d: float
-
-
-@dataclass
-class TypedId:
-    ID_CHARACTERS = 'ABCDEFGHKMNPRSTWX23456789'
-    
-    tcs: str
-    idcs: str
-    
-    @classmethod
-    def random(cls, t: str, n: int = 6) -> 'TypedId':
-        characters = random.choices(cls.ID_CHARACTERS, k=n)
-        idcs = ''.join(characters)
-        return TypedId(t, idcs)
-    
-    def __str__(self) -> str:
-        return f"{self.tcs}-{self.idcs}"
-
-
-@dataclass
-class Point:
-    id: TypedId
+class Point(BaseModel):
+    id: str
     location: Location
 
 
-@dataclass
-class Segment:
-    id: TypedId
+PointReference = Annotated[Point, PlainSerializer(lambda p: p.id)]
+
+
+class Segment(BaseModel):
+    id: str
     type: str
-    a: Point
-    b: Point
+    a: PointReference
+    b: PointReference
 
 
-@dataclass
 class StraightSegment(Segment):
-    type = "straight"
+    type: str = Field(default="straight", frozen=True)
     pass
 
 
-@dataclass
 class RadialSegment(Segment):
-    type = "radial"
+    type: str = Field(default="radial", frozen=True)
     c: Point
 
 
-@dataclass
-class Switch:
-    id: TypedId
-    a: Segment
-    b: Segment
-    c: Segment
+SegmentReference = Annotated[Segment, PlainSerializer(lambda s: s.id)]
+
+
+class Switch(BaseModel):
+    id: str
+    a: SegmentReference
+    b: SegmentReference
+    c: SegmentReference
