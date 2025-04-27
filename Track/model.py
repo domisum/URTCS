@@ -38,6 +38,10 @@ SwitchReference = Annotated[Switch, PlainSerializer(lambda v: v.id)]
 
 class Layout(BaseModel):
     id: str
-    points: list[Point]
-    segments: list[SegmentReference]
-    switches: list[SwitchReference]
+    points: list[Point] = []
+    segments: list[SegmentReference] = []
+    switches: list[SwitchReference] = []
+    
+    @classmethod
+    def empty(cls, id: str):
+        return cls(id=id)
