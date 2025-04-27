@@ -26,26 +26,15 @@
 
 
 <style>
-    line {
+    line, path {
         stroke: #ccc;
-        stroke-width: 1px;
-        vector-effect: non-scaling-stroke;
-    }
-
-    line:hover {
-        stroke: #ff3e00;
         stroke-width: 3px;
-    }
-
-    path {
-        stroke: #ccc;
-        stroke-width: 1px;
         fill: none;
         vector-effect: non-scaling-stroke;
     }
 
-    path:hover {
+    line:hover, path:hover {
         stroke: #ff3e00;
-        stroke-width: 3px;
+        stroke-width: 6px;
     }
 </style>
