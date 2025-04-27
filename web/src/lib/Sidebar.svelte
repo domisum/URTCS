@@ -2,6 +2,7 @@
     import ToolSidebarGroup from "./tool/ToolSidebarGroup.svelte";
     import RenderToggleSidebarGroup from "./renderToggle/RenderToggleSidebarGroup.svelte";
     import {activeTool} from "./tool/toolState.svelte";
+    import ToolOptionSidebarGroup from "./tool/option/ToolOptionSidebarGroup.svelte";
 
     let {isMouseNear} = $props();
 </script>
@@ -9,6 +10,7 @@
 <div class="sidebar-strip" class:visible={isMouseNear || activeTool.itool !== null}>
     <div class="sidebar">
         <ToolSidebarGroup/>
+        <ToolOptionSidebarGroup/>
         <RenderToggleSidebarGroup/>
     </div>
 </div>
