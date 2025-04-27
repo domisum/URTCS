@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from model import Location, Point, Segment, StraightSegment
+from model import Layout, Location, Point, Segment, StraightSegment
 
 app = FastAPI()
 
@@ -41,7 +41,6 @@ def load(osmfile):
                     if prev:
                         sid = f"s-{obj.id}-{ni - 1}"
                         s = StraightSegment(id=sid, type="straight", a=prev, b=p)
-                        print(s)
                         segments.append(s)
                     
                     prev = p
@@ -50,12 +49,12 @@ def load(osmfile):
     
     print(len(points))
     print(len(segments))
-    return Container(points=list(points.values()), segments=segments)
+    return Layout(id="osm", points=list(points.values()), segments=segments, switches=[])
 
 
-container = load("/home/domisum/rail/oberbayern-rail.pbf")
+layout = load("/home/domisum/Seafile/rail/osm/oberbayern-rail.pbf")
 
 
 @app.get("/")
 async def root():
-    return container
+    return layout

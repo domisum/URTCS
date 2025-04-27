@@ -41,3 +41,13 @@ class Switch(BaseModel):
     a: SegmentReference
     b: SegmentReference
     c: SegmentReference
+
+
+SwitchReference = Annotated[Switch, PlainSerializer(lambda v: v.id)]
+
+
+class Layout(BaseModel):
+    id: str
+    points: list[Point]
+    segments: list[SegmentReference]
+    switches: list[SwitchReference]
