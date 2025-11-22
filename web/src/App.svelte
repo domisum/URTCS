@@ -4,6 +4,7 @@
     import SvgCanvas from "./lib/svg/SvgCanvas.svelte";
     import {onMount} from "svelte";
     import {points, segments} from "./track.svelte";
+    import type {Point} from "./model";
 
     let isMouseNearSidebar = $state(false);
 

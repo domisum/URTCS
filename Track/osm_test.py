@@ -1,21 +1,14 @@
-import random
-
 import osmium
 
 from model import Layout, Location, Point, StraightSegment
 
-def random_tid(t: str, n: int = 6) -> str:
-    ID_CHARACTERS = 'ABCDEFGHKMNPRSTWX23456789'
-    characters = random.choices(ID_CHARACTERS, k=n)
-    idcs = ''.join(characters)
-    return f"{t}-{idcs}"
 
 def load(osmfile):
     points = {}
-    segments = []
+    segments = {}
     for obj in osmium.FileProcessor(osmfile, osmium.osm.NODE | osmium.osm.WAY) \
             .with_locations() \
-            .with_filter(osmium.filter.TagFilter(('railway', 'tram'))):
+            .with_filter(osmium.filter.TagFilter(('railway', 'subway'))):
         if obj.is_way():
             try:
                 prev = None
@@ -26,8 +19,8 @@ def load(osmfile):
                     p = points[pid]
                     if prev:
                         sid = f"s-{obj.id}-{ni - 1}"
-                        s = StraightSegment(id=sid, type="straight", a=prev, b=p)
-                        segments.append(s)
+                        s = StraightSegment(id=sid, a=prev, b=p)
+                        segments[sid] = s
                     
                     prev = p
             except osmium.InvalidLocationError:
@@ -35,4 +28,4 @@ def load(osmfile):
     
     print(len(points))
     print(len(segments))
-    return Layout(id="osm", points=list(points.values()), segments=segments, switches=[])
+    return Layout(id="osm", points=points, segments=segments, switches={})

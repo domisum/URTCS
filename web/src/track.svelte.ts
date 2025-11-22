@@ -17,6 +17,21 @@ export function createPoint(location: Location): Point {
     return point;
 }
 
+/**export async function createPoint(location: Location): Promise<void | Point> {
+    try {
+        const response = await fetch("http://localhost:8000/", {
+            method: "POST",
+            body: JSON.stringify({location: location})
+        });
+        const id = await response.text();
+        const point = {id, location};
+        points.push(point);
+        return point;
+    } catch (error) {
+        return console.log(error);
+    }
+}*/
+
 export function createSegment(segment: Segment) {
     segment.id = "s-" + randomString(10);
     segments.push(segment);
@@ -50,7 +65,7 @@ export function setTempElement<T extends { id: string }>(collection: T[], attrib
 }
 
 export function removeTempElement<T extends { id: string }>(collection: T[]) {
-    _.remove(collection, p => p.id == TMP_ID);
+    _.remove(collection, p => p.id.startsWith(TMP_ID));
 }
 
 export function removeTempElements() {

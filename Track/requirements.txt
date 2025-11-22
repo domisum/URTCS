@@ -3,3 +3,5 @@ osmium >= 4.0.2
 fastapi~=0.115.12
 starlette~=0.46.1
 pydantic~=2.10.6
+
+numpy~=2.2.5
